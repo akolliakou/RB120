@@ -32,6 +32,10 @@ class MyCar
     self.color = color
     puts "The new #{color} paint looks good!"
   end
+
+  def self.mileage(gallons, kmhs)
+    puts "This car covers #{kmhs / gallons} kmhs per gallon of gas."
+  end
 end
 
 toyota = MyCar.new(2005, 'silver', 'corolla')
@@ -46,3 +50,4 @@ puts toyota.color
 puts toyota.year
 toyota.spray_paint('black')
 puts toyota.color
+MyCar.mileage(15, 250)
