@@ -20,16 +20,16 @@ class Vehicle
 
   def speed_up(number)
     @speed += number
-    puts "Step on the gas and increase speed by #{number} kmph"
+    puts "Step on the gas and increase speed by #{number} kmph."
   end
 
   def brake(number)
     @speed -= number
-    puts "Step on the brake and decrease speed by #{number} kmph"
+    puts "Step on the brake and decrease speed by #{number} kmph."
   end
 
   def current_speed
-    puts "You are going at #{@speed} kmph"
+    puts "You are going at #{@speed} kmph."
   end
   
   def shut_down
@@ -48,6 +48,16 @@ class Vehicle
 
   def self.count_vehicles
     @@number_of_vehicles
+  end
+
+  def age
+    "The vehicle is #{years_old} years old."
+  end
+
+  private 
+
+  def years_old
+    Time.now.year - self.year
   end
 end
 
@@ -85,3 +95,4 @@ puts toyota
 puts MyCar.ancestors
 puts MyTruck.ancestors
 puts Vehicle.ancestors
+puts toyota.age
