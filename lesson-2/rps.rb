@@ -1,109 +1,181 @@
+class Move
+  OPTIONS = {
+    'r' => 'rock',
+    'l' => 'lizard',
+    'sp' => 'spock',
+    'sc' => 'scissors',
+    'p' => 'paper'
+  }
+
+  WINNING_OPTIONS = {
+    'r' => ['s', 'l'],
+    'l' => ['p', 'sp'],
+    'sp' => ['r', 's'],
+    's' => ['p', 'l'],
+    'p' => ['r', 'sp']
+  }
+
+  def initialize(value)
+    @value = value
+  end
+
+  def to_s
+    OPTIONS[value]
+  end
+
+  def >(other_move)
+    WINNING_OPTIONS[value].include?(other_move.value)
+  end
+
+  protected
+
+  attr_reader :value
+end
+
 class Player
-  attr_accessor :move, :name
+  attr_accessor :name, :move, :moves, :score
 
-  def initialize(player_type)
-    @player_type = player_type
-    @move = nil
+  def initialize
+    @moves = []
+    @score = 0
     set_name
-  end
-
-  def set_name
-    if human?
-      n = nil
-      loop do
-        puts "What's your name?"
-        n = gets.chomp
-        break unless n.empty?
-        puts "Sorry, must enter a value."
-      end
-      self.name = n
-    else
-      self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
-    end
-  end
-
-  def choose
-    if human?
-      choice = nil
-      loop do
-        puts "Please choose rock, paper or scissors:"
-        choice = gets.chomp
-        break if ['rock', 'paper', 'scissors'].include?(choice)
-        puts "Sorry, invalid choice."
-      end
-      self.move = choice
-    else
-      self.move = ['rock', 'paper', 'scissors'].sample
-    end
-  end
-
-  def human?
-    @player_type == :human
   end
 end
 
-class RPSGame
-  attr_accessor :human, :computer
+class Human < Player
+  def choose
+    choice = ''
+    loop do
+      ask_for_choice
+      choice = gets.chomp
+      break if Move::VALUES.keys.include? choice
+      prompt("Sorry, that was not a valid choice. Try again!")
+    end
 
+    self.move = Move.new(choice)
+    moves << move.to_s
+  end
+
+  private
+
+  def set_name
+    system 'clear'
+    n = nil
+    loop do
+      puts "What is your name?"
+      n = gets.chomp
+      break unless n.empty?
+      puts "Sorry, that is not a valid name. Try again!"
+    end
+    self.name = n
+  end
+
+  def ask_for_choice
+    prompt("Choose one:
+    'r'  for rock,
+    'p'  for paper,
+    's' for scissors,
+    'l'  for lizard,
+    'sp' for spock")
+  end
+
+end
+
+class Computer < Player
+  def set_name
+    self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
+  end
+end
+
+class R2D2 < Computer
+  def set_name
+    self.name = 'R2D2'
+  end
+
+  def choose
+    self.move = Move.new('r')
+    moves << move
+  end
+end
+
+class Hal < Computer
+  def set_name
+    self.name = 'Hal'
+  end
+
+  def choose
+    self.move = Move.new(['r', 's', 's', 's', 's', 'l', 'l'].sample)
+    moves << move
+  end
+end
+
+class Chappie < Computer
+  def set_name
+    self.name = 'Chappie'
+  end
+
+  def choose
+    self.move = Move.new(['r', 'sp', 's', 'p' 'l', 'l', 'l', 'l', 'l'].sample)
+    moves << move
+  end
+end
+
+class Sonny < Computer
+  def set_name
+    self.name = 'Sonny'
+  end
+
+  def choose
+    self.move = Move.new('p')
+    moves << move
+  end
+end
+
+class Number5 < Computer
+  def set_name
+    self.name = 'Number 5'
+  end
+
+  def choose
+    self.move = Move.new(Move::OPTIONS.keys.sample)
+    moves << move
+  end
+end
+
+
+class RPSGame
   def initialize
-    @human = Player.new(:human)
-    @computer = Player.new(:computer)
+    @human = Human.new
+    @computer = Computer.new
   end
 
   def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors!"
+  puts "Welcome to Rock, Paper, Scissors, Lizard, Spock!
+  Whoever gets to 5 wins first, wins the game! 
+  Enter your name:"
   end
 
   def display_goodbye_message
-    puts "Thanks for playing Rock, Paper, Scissors. Goodbye!"
-  end
-
-  def display_moves
-    puts "#{human.name} chose #{human.move}."
-    puts "#{computer.name} chose #{computer.move}."
-  end
-
-  def display_winner
-    case human.move
-    when 'rock'
-      puts "It's a tie!" if computer.move == 'rock'
-      puts "#{human.name} won!" if computer.move == 'scissors'
-      puts "#{computer.name} won!" if computer.move == 'paper'
-    when 'paper'
-      puts "It's a tie!" if computer.move == 'paper'
-      puts "#{human.name} won!" if computer.move == 'rock'
-      puts "#{computer.name} won!" if computer.move == 'scissors'
-    when 'scissors'
-      puts "It's a tie!" if computer.move == 'scissors'
-      puts "#{human.name} won!" if computer.move == 'rock'
-      puts "#{computer.name} won!" if computer.move == 'paper'
-    end
-  end
-
-  def play_again?
-    answer = nil
-    loop do
-      puts "Would you like to play again? (y/n)?"
-      answer = gets.chomp
-      break if ['y', 'n'].include?(answer.downcase)
-      puts "Sorry, must be y or n."
-    end
-
-    return true if answer.downcase == 'y'
-    false
+    puts "Thank you for playing! Goodbye : )"
   end
 
   def play
+    system 'clear'
     display_welcome_message
-    loop do
-      human.choose
-      computer.choose
-      display_moves
-      display_winner
-      break unless play_again?
-    end
-    display_goodbye_message
+    display_rules
+    human.choose
+    computer.choose
+    display_moves
+    compare_moves
+    update_score
+    display_score
+    play_another_match || display_winner
+    clear_screen
+    play_again
   end
+end
+
+def compare(move1, move2)
 end
 
 RPSGame.new.play
