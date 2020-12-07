@@ -1,0 +1,10 @@
+
+invalid_choice: "Sorry, that was not a valid choice. Try again!"
+name: "Please enter your name:"
+invalid_name: "Oops, that doesn't look like a valid name. Try again!"
+round_human: "You won this round!"
+tie: "It's a tie!"
+play_again: "Would you like to play another round (y/n)?"
+invalid_play_again: "Sorry, please enter either 'y' or 'n'"
+game_human: "You won this game!"
+exit: "Thank you for playing! Come back soon :)"
