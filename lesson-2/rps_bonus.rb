@@ -274,12 +274,11 @@ class RPSGame
   end
 
   def play_another_round?
-    puts ""
     answer = ''
     loop do
       puts "Would you like to play another round (y/n)?"
       answer = gets.chomp
-      break if ['y', 'n'].include?(answer.downcase)
+      break if answer.downcase == 'y' || answer.downcase == 'n'
       puts "Sorry, please enter either 'y' or 'n'"
     end
 
@@ -315,7 +314,7 @@ class RPSGame
     puts "    ---Game Summary---"
 
     computer.moves.size.times do |idx|
-      puts "Round #{idx + 1}:
+      puts "    Round #{idx + 1}:
       You chose #{human.moves[idx]}
       #{computer.name} chose #{computer.moves[idx]}"
       puts ""
