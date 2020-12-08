@@ -368,6 +368,8 @@ class RPSGame
   end
 end
 
+RPSGame.new.play
+
   # or
 
   # def round_with_rules
@@ -392,5 +394,3 @@ end
   # def play_round
   #   show_rules? ? round_with_rules : round_without_rules
   # end
-
-RPSGame.new.play
