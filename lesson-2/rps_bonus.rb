@@ -50,8 +50,8 @@ class Human < Player
     choice = ''
     loop do
       ask_for_choice
-      choice = gets.chomp
-      break if Move::OPTIONS.keys.include? choice
+      choice = gets.chomp.downcase
+      break if Move::OPTIONS.keys.include?(choice)
       puts "Sorry, that was not a valid choice. Try again!"
     end
 
@@ -67,13 +67,13 @@ class Human < Player
     loop do
       puts "What is your name?"
       n = gets.chomp
-      break unless valid_name?(n)
+      break unless invalid_name?(n)
       puts "Sorry, that is not a valid name. Try again!"
     end
     self.name = n
   end
 
-  def valid_name?(name)
+  def invalid_name?(name)
     name.empty? || name.chars.all? { |char| char == ' ' }
   end
 
@@ -178,13 +178,14 @@ class RPSGame
 
   def play
     display_welcome_message
+    display_rules
 
     loop do
       reset_game
       play_round
       game_display
       break unless play_another_round?
-      system 'clear'
+      clear_screen
     end
 
     display_goodbye_message
@@ -231,8 +232,10 @@ class RPSGame
   end
 
   def round_display
-    display_rules
     display_score
+    players_choice
+    display_moves
+    display_round_winner
   end
 
   def game_display
@@ -247,8 +250,12 @@ class RPSGame
     puts "#{computer.name} chose #{computer.move}."
   end
 
-  def clear_screen
+  def pause_screen
     sleep(1.5)
+    clear_screen
+  end
+
+  def clear_screen
     system 'clear'
   end
 
@@ -278,12 +285,11 @@ class RPSGame
     loop do
       puts "Would you like to play another round (y/n)?"
       answer = gets.chomp
-      break if answer.downcase == 'y' || answer.downcase == 'n'
+      break if ['y', 'n'].include?(answer.downcase)
       puts "Sorry, please enter either 'y' or 'n'"
     end
 
-    return true if answer.downcase == 'y'
-    return false if answer.downcase == 'n'
+    answer.downcase == 'y'
   end
 
   def game_over?
@@ -321,20 +327,70 @@ class RPSGame
     end
   end
 
+  def show_rules?
+    puts ""
+    answer = ''
+    loop do
+      puts "Would you like to continue seeing the rules for this round?"
+      answer = gets.chomp
+      break if ['y', 'n'].include?(answer.downcase)
+      puts "Sorry, please enter either 'y' or 'n'"
+    end
+
+    answer.downcase == 'y'
+  end
+
   def display_goodbye_message
     puts "Thank you for playing! Come back soon :)"
   end
 
-  def play_round
+  def round_with_rules
     loop do
-      round_display
-      players_choice
-      display_moves
-      display_round_winner
       clear_screen
+      display_rules
+      round_display
+      pause_screen
       break if game_over?
     end
   end
+
+  def play_round
+    if show_rules?
+      round_with_rules
+    else
+      loop do
+        clear_screen
+        round_display
+        pause_screen
+        break if game_over?
+      end
+    end
+  end
 end
+
+  # or
+
+  # def round_with_rules
+  #   loop do
+  #     clear_screen
+  #     display_rules
+  #     round_display
+  #     pause_screen
+  #     break if game_over?
+  #   end
+  # end
+
+  # def round_without_rules
+  #   loop do
+  #     clear_screen
+  #     round_display
+  #     pause_screen
+  #     break if game_over?
+  #   end
+  # end
+
+  # def play_round
+  #   show_rules? ? round_with_rules : round_without_rules
+  # end
 
 RPSGame.new.play
