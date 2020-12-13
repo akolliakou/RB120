@@ -52,7 +52,7 @@ class Human < Player
       ask_for_choice
       choice = gets.chomp.downcase
       break if Move::OPTIONS.keys.include?(choice)
-      puts "Sorry, that was not a valid choice. Try again!"
+      puts MESSAGES['invalid_choice']
     end
 
     self.move = Move.new(choice)
@@ -65,10 +65,10 @@ class Human < Player
     system 'clear'
     n = nil
     loop do
-      puts "What is your name?"
+      puts MESSAGES['name']
       n = gets.chomp
       break unless invalid_name?(n)
-      puts "Sorry, that is not a valid name. Try again!"
+      puts MESSAGES['invalid_name']
     end
     self.name = n
   end
@@ -270,11 +270,11 @@ class RPSGame
   def display_round_winner
     puts ""
     if human.move > computer.move
-      puts "You won this round!"
+      puts MESSAGES['round_human']
     elsif computer.move > human.move
       puts "#{computer.name} won this round!"
     else
-      puts "It's a tie!"
+      puts MESSAGES['tie']
     end
 
     update_scores
@@ -283,10 +283,10 @@ class RPSGame
   def play_another_round?
     answer = ''
     loop do
-      puts "Would you like to play another round (y/n)?"
+      puts MESSAGES['play_again']
       answer = gets.chomp
       break if ['y', 'n'].include?(answer.downcase)
-      puts "Sorry, please enter either 'y' or 'n'"
+      puts MESSAGES['invalid_play_again']
     end
 
     answer.downcase == 'y'
@@ -299,7 +299,7 @@ class RPSGame
   def display_game_winner
     puts ""
     if human.score > computer.score
-      puts "You won this game!"
+      puts MESSAGES['game_human']
     else
       puts "#{computer.name} won this game!"
     end
@@ -331,17 +331,17 @@ class RPSGame
     puts ""
     answer = ''
     loop do
-      puts "Would you like to continue seeing the rules for this round?"
+      puts MESSAGES['see_rules']
       answer = gets.chomp
       break if ['y', 'n'].include?(answer.downcase)
-      puts "Sorry, please enter either 'y' or 'n'"
+      puts MESSAGES['invalid_rules_again']
     end
 
     answer.downcase == 'y'
   end
 
   def display_goodbye_message
-    puts "Thank you for playing! Come back soon :)"
+    puts MESSAGES['exit']
   end
 
   def round_with_rules
@@ -369,28 +369,3 @@ class RPSGame
 end
 
 RPSGame.new.play
-
-  # or
-
-  # def round_with_rules
-  #   loop do
-  #     clear_screen
-  #     display_rules
-  #     round_display
-  #     pause_screen
-  #     break if game_over?
-  #   end
-  # end
-
-  # def round_without_rules
-  #   loop do
-  #     clear_screen
-  #     round_display
-  #     pause_screen
-  #     break if game_over?
-  #   end
-  # end
-
-  # def play_round
-  #   show_rules? ? round_with_rules : round_without_rules
-  # end
